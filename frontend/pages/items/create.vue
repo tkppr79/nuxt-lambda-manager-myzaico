@@ -57,15 +57,31 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { postItem } from '@/utils/mock-api';
+import { Item } from '@/types';
 
 export default Vue.extend({
-  data: () => ({
-    form: {},
-    menu: false,
-  }),
+  data: () => {
+    const form: Item = {
+      id: 0,
+      tags: '',
+      name: '',
+      sku: '',
+      manufacturer: '',
+      releaseDate: '',
+      listPrice: 0,
+    };
+
+    return {
+      form,
+      menu: false,
+    }
+  },
   methods: {
     submit(){
-
+      const newItem = JSON.parse(JSON.stringify(this.form));
+      newItem.listPrice = parseInt(newItem.listPrice, 10);
+      postItem(newItem);
     }
   },
 });

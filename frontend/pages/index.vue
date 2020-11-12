@@ -48,6 +48,7 @@
                 elevation="0"
                 color="primary"
                 small
+                @click="$router.push({ path: `/items/edit/${item.id}` })"
               >
                 編集
               </v-btn>

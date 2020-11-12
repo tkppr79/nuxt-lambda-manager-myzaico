@@ -12,7 +12,18 @@ export const getItem = (id: number): Item | null => {
   return null;
 };
 
-export const postItem = (item: Item) => {
+export const postItem = (item: Item): void => {
   item.id = mockStore.state.items.length + 1;
   mockStore.state.items.push(item);
+};
+
+export const putItem = (item: Item): void => {
+  const items = mockStore.state.items;
+
+  for (let i = 0; i < items.length; i++) {
+    if(items[i].id === item.id){
+      items[i] = item;
+      return;
+    }
+  }
 };

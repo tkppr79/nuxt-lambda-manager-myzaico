@@ -1,6 +1,10 @@
 import mockStore from '@/utils/mock-store';
 import { Item } from '@/types';
 
+export const getItems = (): Item[] => {
+  return mockStore.state.items;
+};
+
 export const getItem = (id: number): Item | null => {
   const items = mockStore.state.items;
 
@@ -26,4 +30,9 @@ export const putItem = (item: Item): void => {
       return;
     }
   }
+};
+
+export const deleteItem = (id: number): Item[] => {
+  mockStore.state.items = mockStore.state.items.filter(item => item.id !== id);
+  return mockStore.state.items;
 };

@@ -1,5 +1,5 @@
 <template>
-  <v-row justify="center" align="start" no-gutters>
+  <v-row v-if="items" justify="center" align="start" no-gutters class="item-list-page">
     <v-col cols="12" lg="3">
       <v-card outlined class="sidebar mr-3">
         <h2 class="text-center">フィルター</h2>
@@ -56,6 +56,7 @@
                 elevation="0"
                 color="primary"
                 small
+                @click="deleteItem(item.id)"
               >
                 削除
               </v-btn>
@@ -69,51 +70,65 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from 'vue';
+import { getItems, deleteItem } from '@/utils/mock-api';
+import { Item } from '@/types';
 
 export default Vue.extend({
-  data: () => ({
-    items: [
-      { id: 1, tags: 'アパレル', name: 'testItem_1', sku: 'AAAAA', manufacturer: 'メーカーA', releaseDate: '2020-10-01', listPrice: 3000 },
-      { id: 2, tags: '家電', name: 'testItem_2', sku: 'BBBBB', manufacturer: 'メーカーB', releaseDate: '2020-10-05', listPrice: 2000 },
-      { id: 3, tags: 'パソコン', name: 'testItem_3', sku: 'CCCCC', manufacturer: 'メーカーC', releaseDate: '2020-10-10', listPrice: 3000 },
-      { id: 4, tags: '本', name: 'testItem_4', sku: 'DDAAAD', manufacturer: 'メーカーD', releaseDate: '2020-10-15', listPrice: 4000 },
-      { id: 5, tags: 'ゲーム', name: 'testItem_5', sku: 'EEEEE', manufacturer: 'メーカーE', releaseDate: '2020-10-20', listPrice: 1000 },
-      { id: 6, tags: '食品', name: 'testItem_6', sku: 'FFFFF', manufacturer: 'メーカーF', releaseDate: '2020-10-25', listPrice: 7000 },
-    ],
-    page: 1,
-    pageCount: 0,
-    itemsPerPage: 5,
-    viewResults: [5, 10, 20, 30, 40, 50, 100],
-    headers: [
-      { text: 'タグ', value: 'tags', sortable: false },
-      { text: 'アイテム名', value: 'name', align: 'start' },
-      { text: 'SKU', value: 'sku' },
-      { text: '製造元', value: 'manufacturer' },
-      { text: '発売日', value: 'releaseDate' },
-      { text: '定価', value: 'listPrice' },
-      { text: 'アクション', value: 'actions', sortable: false },
-    ],
-  }),
+  data(): {
+    items: Item[] | null,
+    page: number,
+    pageCount: number,
+    itemsPerPage: number,
+    viewResults: number[],
+    headers: object[],
+  } {
+    return {
+      items: null,
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 5,
+      viewResults: [5, 10, 20, 30, 40, 50, 100],
+      headers: [
+        { text: 'タグ', value: 'tags', sortable: false },
+        { text: 'アイテム名', value: 'name', align: 'start' },
+        { text: 'SKU', value: 'sku' },
+        { text: '製造元', value: 'manufacturer' },
+        { text: '発売日', value: 'releaseDate' },
+        { text: '定価', value: 'listPrice' },
+        { text: 'アクション', value: 'actions', sortable: false },
+      ],
+    };
+  },
+  methods: {
+    deleteItem(id: number){
+      this.items = deleteItem(id);
+    }
+  },
+  created(){
+    this.items = getItems();
+  },
 });
 </script>
 
 <style lang="scss">
 
-.sidebar {
-  h2 {
-    background-color: lightgray;
-    color: white;
+.item-list-page {
+  .sidebar {
+    h2 {
+      background-color: lightgray;
+      color: white;
+    }
   }
-}
 
-.item-table {
-  min-height: 750px;
+  .item-table {
+    min-height: 750px;
 
-  .v-text-field__details,
-  .v-messages {
-    min-height: 0;
+    .v-text-field__details,
+    .v-messages {
+      min-height: 0;
+    }
   }
 }
 

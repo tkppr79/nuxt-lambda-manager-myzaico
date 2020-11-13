@@ -8,6 +8,7 @@ const mockStore = {
       { id: 5, tags: 'ゲーム', name: 'testItem_5', sku: 'EEEEE', manufacturer: 'メーカーE', releaseDate: '2020-10-20', listPrice: 1000 },
       { id: 6, tags: '食品', name: 'testItem_6', sku: 'FFFFF', manufacturer: 'メーカーF', releaseDate: '2020-10-25', listPrice: 7000 },
     ],
+    filterSets: [],
   },
 };
 

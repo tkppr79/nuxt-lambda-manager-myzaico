@@ -7,7 +7,7 @@
 
       <v-btn text @click="$router.push('/')">アイテム一覧</v-btn>
       <v-btn text @click="$router.push('/items/create')">アイテム登録</v-btn>
-      <v-btn text @click="$router.push('/settings')">設定</v-btn>
+      <v-btn text @click="$router.push('/setting')">設定</v-btn>
       <v-btn outlined >ログイン</v-btn>
     </div>
   </v-app-bar>

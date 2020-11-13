@@ -1,5 +1,5 @@
 import mockStore from '@/utils/mock-store';
-import { Item } from '@/types';
+import { Item, FilterSet } from '@/types';
 
 export const getItems = (): Item[] => {
   return mockStore.state.items;
@@ -35,4 +35,8 @@ export const putItem = (item: Item): void => {
 export const deleteItem = (id: number): Item[] => {
   mockStore.state.items = mockStore.state.items.filter(item => item.id !== id);
   return mockStore.state.items;
+};
+
+export const getFilterSets = (): FilterSet[] => {
+  return mockStore.state.filterSets;
 };

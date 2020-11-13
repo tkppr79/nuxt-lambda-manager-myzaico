@@ -18,7 +18,7 @@ export type FilterSet = {
 
 export type Filter = {
   checkbox: boolean;
-  targetColumn: { label: string, value: string } | null;
+  targetColumn?: { label: string, value: string } | null;
   searchString?: string;
   range?: { start: number, end: number };
   tag?: string;

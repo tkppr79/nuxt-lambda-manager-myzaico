@@ -28,9 +28,13 @@
 
     <v-col col="12" lg="9" class="">
       <v-card outlined class="pa-4">
-        <div>
-          <p>FilterEditors PH</p>
-        </div>
+        <FilterSetEditor
+          v-for="(filterSet, index) in filterSets"
+          :key="filterSet.id"
+          :filter-set="filterSet"
+          @set-filter-set="filterSets.splice(index, 1, $event)"
+          @button-click="deleteFilterSet(filterSet.id)"
+        />
 
         <div class="ma-3 pr-12">
           <v-col col="12" lg="6" xl="4" class="d-flex text-center mx-auto my-3 pl-12">
@@ -60,6 +64,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import FilterSetEditor from '@/components/FilterSetEditor.vue';
 import { getFilterSets } from '@/utils/mock-api';
 import { FilterSet } from '@/types';
 
@@ -106,9 +111,12 @@ export default Vue.extend({
       this.filterSets.push(filterSet);
       this.filterType = '';
     },
-    created(){
-      this.filterSets = getFilterSets();
+    deleteFilterSet(id: string){
+      this.filterSets = this.filterSets.filter(filterSet => filterSet.id !== id);
     },
+  },
+  created(){
+    this.filterSets = getFilterSets();
   },
 });
 </script>

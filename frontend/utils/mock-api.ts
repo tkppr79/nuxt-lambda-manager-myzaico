@@ -40,3 +40,7 @@ export const deleteItem = (id: number): Item[] => {
 export const getFilterSets = (): FilterSet[] => {
   return mockStore.state.filterSets;
 };
+
+export const postFilterSets = (filterSets: FilterSet[]): void => {
+  mockStore.state.filterSets = filterSets;
+};

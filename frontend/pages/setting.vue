@@ -16,12 +16,14 @@
 
         <div>
           <v-card-title class="justify-center">OR条件</v-card-title>
+          <FilterList :filterSets="orConditionList" class="px-4" />
         </div>
 
-        <v-divider />
+        <v-divider class="mx-2" />
 
         <div>
           <v-card-title class="justify-center">AND条件</v-card-title>
+          <FilterList :filterSets="andConditionList" class="px-4" />
         </div>
       </v-card>
     </v-col>
@@ -57,6 +59,17 @@
             </v-btn>
           </v-col>
         </div>
+
+        <div class="text-center mt-12 mb-5 pl-12">
+          <v-btn
+            elevation="0"
+            color="primary"
+            large
+            @click="saveFilterSets"
+          >
+            フィルター設定を保存
+          </v-btn>
+        </div>
       </v-card>
     </v-col>
   </v-row>
@@ -65,7 +78,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import FilterSetEditor from '@/components/FilterSetEditor.vue';
-import { getFilterSets } from '@/utils/mock-api';
+import FilterList from '@/components/FilterList.vue';
+import { getFilterSets, postFilterSets } from '@/utils/mock-api';
 import { FilterSet } from '@/types';
 
 export default Vue.extend({
@@ -83,6 +97,14 @@ export default Vue.extend({
       ],
       filterType: '',
     };
+  },
+  computed: {
+    orConditionList(): FilterSet[]{
+      return this.filterSets.filter(filterSet => filterSet.condition === 'OR');
+    },
+    andConditionList(): FilterSet[]{
+      return this.filterSets.filter(filterSet => filterSet.condition === 'AND');
+    },
   },
   methods: {
     getUniqueStr() {
@@ -114,14 +136,20 @@ export default Vue.extend({
     deleteFilterSet(id: string){
       this.filterSets = this.filterSets.filter(filterSet => filterSet.id !== id);
     },
+    saveFilterSets(){
+      const clone = JSON.parse(JSON.stringify(this.filterSets));
+      postFilterSets(clone);
+    },
   },
   created(){
-    this.filterSets = getFilterSets();
+    const fetchedFilterSets = getFilterSets();
+    this.filterSets = JSON.parse(JSON.stringify(fetchedFilterSets));
   },
 });
 </script>
 
 <style lang="scss">
+@import "~vuetify/src/styles/settings/_variables";
 
 .setting-page {
   h2 {
@@ -134,6 +162,15 @@ export default Vue.extend({
     h2 {
       background-color: lightgray;
       color: white;
+    }
+
+    .v-subheader {
+      font-size: 0.5rem;
+      min-width: 40px;
+
+      @media #{map-get($display-breakpoints, 'xl-only')}{
+        font-size: 0.875rem;
+      }
     }
   }
 }

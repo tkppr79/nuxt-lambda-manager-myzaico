@@ -1,4 +1,11 @@
-const mockStore = {
+import { Item, FilterSet } from '@/types';
+
+const mockStore: {
+  state: {
+    items: Item[],
+    filterSets: FilterSet[],
+  }
+} = {
   state: {
     items: [
       { id: 1, tags: 'アパレル', name: 'testItem_1', sku: 'AAAAA', manufacturer: 'メーカーA', releaseDate: '2020-10-01', listPrice: 3000 },

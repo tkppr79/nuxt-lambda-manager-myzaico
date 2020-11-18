@@ -57,6 +57,11 @@ interface Props {
 }
 
 const options: ThisTypedComponentOptionsWithRecordProps<Vue, Data, Methods, Computed, Props> = {
+  components: {
+    TextFilter,
+    RangeFilter,
+    TagFilter,
+  },
   props: {
     filterSets: { required: true },
   },

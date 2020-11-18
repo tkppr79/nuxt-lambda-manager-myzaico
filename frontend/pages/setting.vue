@@ -83,6 +83,10 @@ import { getFilterSets, postFilterSets } from '@/utils/mock-api';
 import { FilterSet } from '@/types';
 
 export default Vue.extend({
+  components: {
+    FilterSetEditor,
+    FilterList,
+  },
   data(): {
     filterSets: FilterSet[],
     filterTypes: object[],

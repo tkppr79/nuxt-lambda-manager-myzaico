@@ -6,6 +6,7 @@ export type Item = {
   manufacturer: string;
   releaseDate: string;
   listPrice: number;
+  [key: string]: number | string;
 };
 
 export type FilterSet = {
@@ -20,6 +21,11 @@ export type Filter = {
   checkbox: boolean;
   targetColumn?: { label: string, value: string } | null;
   searchString?: string;
-  range?: { start: number, end: number };
+  range?: Range;
   tag?: string;
+};
+
+export type Range = {
+  start: number;
+  end: number;
 };

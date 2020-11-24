@@ -86,7 +86,7 @@ export default Vue.extend({
   },
   data(): {
     items: Item[],
-    filterSets: FilterSet[] | null,
+    filterSets: FilterSet[],
     page: number,
     pageCount: number,
     itemsPerPage: number,
@@ -97,7 +97,7 @@ export default Vue.extend({
   } {
     return {
       items: [],
-      filterSets: null,
+      filterSets: [],
       page: 1,
       pageCount: 0,
       itemsPerPage: 5,
@@ -117,16 +117,10 @@ export default Vue.extend({
   },
   computed: {
     orConditionList(): FilterSet[]{
-      if(this.filterSets)
-        return this.filterSets.filter(filterSet => filterSet.condition === 'OR');
-      else
-        return [];
+      return this.filterSets.filter(filterSet => filterSet.condition === 'OR');
     },
     andConditionList(): FilterSet[]{
-      if(this.filterSets)
-        return this.filterSets.filter(filterSet => filterSet.condition === 'AND');
-      else
-        return [];
+      return this.filterSets.filter(filterSet => filterSet.condition === 'AND');
     },
     filteredItems(): Item[]{
       let items: Item[] = this.applyFilters(this.items, this.orConditionList, this.getUnion);
@@ -135,8 +129,8 @@ export default Vue.extend({
     },
   },
   methods: {
-    deleteItem(id: number){
-      this.items = deleteItem(id);
+    async deleteItem(id: number){
+      this.items = await deleteItem(id);
     },
     applyFilters(rawItems: Item[], filterSets: FilterSet[], callback: Function): Item[]{
       let filters: Filter[] = []
@@ -225,10 +219,14 @@ export default Vue.extend({
     },
   },
   created(){
-    const fetchedItems = getItems();
-    this.items = JSON.parse(JSON.stringify(fetchedItems));
-    const fetchedFilterSets = getFilterSets();
-    this.filterSets = JSON.parse(JSON.stringify(fetchedFilterSets));
+    const fetchItems = (async () => {
+      const fetchedItems = await getItems();
+      this.items = JSON.parse(JSON.stringify(fetchedItems));
+    })();
+    const fetchFilterSets = (async () => {
+      const fetchedFilterSets = await getFilterSets();
+      this.filterSets = JSON.parse(JSON.stringify(fetchedFilterSets));
+    })();
   },
 });
 </script>

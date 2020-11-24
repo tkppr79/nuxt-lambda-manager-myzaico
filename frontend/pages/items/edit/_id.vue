@@ -72,14 +72,17 @@ export default Vue.extend({
     };
   },
   methods: {
-    submit(){
+    async submit(){
       const newItem = JSON.parse(JSON.stringify(this.form));
       newItem.listPrice = parseInt(newItem.listPrice, 10);
-      putItem(newItem);
+      await putItem(newItem);
     }
   },
   created(){
-    this.form = getItem(parseInt(this.$route.params.id, 10));
+    const fetchItem = (async () => {
+      const fetchedItem = await getItem(parseInt(this.$route.params.id, 10));
+      this.form = JSON.parse(JSON.stringify(fetchedItem));
+    })();
   },
 });
 </script>

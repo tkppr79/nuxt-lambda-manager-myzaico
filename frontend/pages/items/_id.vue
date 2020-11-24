@@ -76,7 +76,9 @@ export default Vue.extend({
     },
   },
   created(){
-    this.item = getItem(parseInt(this.$route.params.id, 10));
+    const fetchItem = (async () => {
+      this.item = await getItem(parseInt(this.$route.params.id, 10));
+    })();
   },
 });
 </script>

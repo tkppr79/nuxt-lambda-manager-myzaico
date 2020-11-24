@@ -78,10 +78,10 @@ export default Vue.extend({
     }
   },
   methods: {
-    submit(){
+    async submit(){
       const newItem = JSON.parse(JSON.stringify(this.form));
       newItem.listPrice = parseInt(newItem.listPrice, 10);
-      postItem(newItem);
+      await postItem(newItem);
     }
   },
 });

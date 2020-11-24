@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import ItemCreatePage from '@/pages/items/create.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
+import { waitTimer } from '@/test/helpers';
 
 Vue.use(Vuetify);
 
@@ -40,7 +41,7 @@ describe('Item create page component', () => {
     expect(wrapper.vm.form.releaseDate).toBe(form.releaseDate);
   });
 
-  it('can submit', () => {
+  it('can submit', async () => {
     const methodSpy = jest.spyOn(ItemCreatePage.options.methods, 'submit');
     const wrapper = mount(ItemCreatePage, { vuetify });
 
@@ -53,6 +54,7 @@ describe('Item create page component', () => {
     inputs.at(4).setValue(form.listPrice);
 
     wrapper.find('button').trigger('click');
+    await waitTimer(20);
     expect(methodSpy).toHaveBeenCalledTimes(1);
   });
 });

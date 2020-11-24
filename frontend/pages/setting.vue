@@ -140,14 +140,16 @@ export default Vue.extend({
     deleteFilterSet(id: string){
       this.filterSets = this.filterSets.filter(filterSet => filterSet.id !== id);
     },
-    saveFilterSets(){
+    async saveFilterSets(){
       const clone = JSON.parse(JSON.stringify(this.filterSets));
-      postFilterSets(clone);
+      await postFilterSets(clone);
     },
   },
   created(){
-    const fetchedFilterSets = getFilterSets();
-    this.filterSets = JSON.parse(JSON.stringify(fetchedFilterSets));
+    const fetchFilterSets = (async () => {
+      const fetchedFilterSets = await getFilterSets();
+      this.filterSets = JSON.parse(JSON.stringify(fetchedFilterSets));
+    })();
   },
 });
 </script>

@@ -3,6 +3,7 @@ import SettingPage from '@/pages/setting.vue';
 import FilterList from '@/components/FilterList.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
+import { waitTimer } from '@/test/helpers';
 
 Vue.use(Vuetify);
 
@@ -15,6 +16,7 @@ describe('Setting page component', () => {
 
   it('add filterSet', async () => {
     const wrapper = mount(SettingPage, { vuetify });
+    await waitTimer(20);
 
     wrapper.find('.v-select').vm.$emit('input', 'tag');
     wrapper.findAll('button').at(0).trigger('click');

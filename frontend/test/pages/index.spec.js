@@ -2,6 +2,7 @@ import { mount, RouterLinkStub } from '@vue/test-utils';
 import IndexPage from '@/pages/index.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
+import { waitTimer } from '@/test/helpers';
 
 Vue.use(Vuetify);
 
@@ -19,6 +20,8 @@ describe('Index page component', () => {
         RouterLink: RouterLinkStub
       },
     });
+
+    await waitTimer(20);
 
     wrapper.vm.filterSets = [
       {

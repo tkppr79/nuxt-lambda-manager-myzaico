@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import ItemEditPage from '@/pages/items/edit/_id.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
+import { waitTimer } from '@/test/helpers';
 
 Vue.use(Vuetify);
 
@@ -37,11 +38,12 @@ describe('Item edit page component', () => {
     vuetify = new Vuetify();
   });
 
-  it('update form state', () => {
+  it('update form state', async () => {
     const wrapper = mount(ItemEditPage, {
       vuetify,
       mocks: { $route },
     });
+    await waitTimer(20);
     wrapper.vm.form = item;
 
     expect(wrapper.vm.form.tags).toBe(item.tags);
@@ -67,12 +69,13 @@ describe('Item edit page component', () => {
     expect(wrapper.vm.form.releaseDate).toBe(form.releaseDate);
   });
 
-  it('can submit', () => {
+  it('can submit', async () => {
     const methodSpy = jest.spyOn(ItemEditPage.options.methods, 'submit');
     const wrapper = mount(ItemEditPage, {
       vuetify,
       mocks: { $route },
     });
+    await waitTimer(20);
     wrapper.vm.form = item;
 
     const inputs = wrapper.findAll('input');
@@ -84,6 +87,7 @@ describe('Item edit page component', () => {
     inputs.at(4).setValue(form.listPrice);
 
     wrapper.find('button').trigger('click');
+    await waitTimer(20);
     expect(methodSpy).toHaveBeenCalledTimes(1);
   });
 });

@@ -10,13 +10,30 @@ Vue.use(Vuetify);
 describe('Setting page component', () => {
   let vuetify;
 
+  window.alert = jest.fn((message) => console.log(message));
+
+  const getFetchPromise = Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ Item: { filterSets: [] } }),
+  });
+  const putFetchPromise = Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({}),
+  });
+  window.fetch = jest.fn((url, options) => {
+    if(options.method === 'PUT')
+      return putFetchPromise;
+    else if(options.method === 'GET')
+      return getFetchPromise;
+  });
+
   beforeEach(() => {
     vuetify = new Vuetify();
   });
 
   it('add filterSet', async () => {
     const wrapper = mount(SettingPage, { vuetify });
-    await waitTimer(20);
+    await waitTimer(10);
 
     wrapper.find('.v-select').vm.$emit('input', 'tag');
     wrapper.findAll('button').at(0).trigger('click');

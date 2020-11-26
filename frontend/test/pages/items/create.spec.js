@@ -18,6 +18,23 @@ describe('Item create page component', () => {
     releaseDate: '2000-01-01',
   };
 
+  window.alert = jest.fn((message) => console.log(message));
+
+  const getFetchPromise = Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ Items: [] }),
+  });
+  const postFetchPromise = Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({}),
+  });
+  window.fetch = jest.fn((url, options) => {
+    if(options.method === 'POST')
+      return postFetchPromise;
+    else if(options.method === 'GET')
+      return getFetchPromise;
+  });
+
   beforeEach(() => {
     vuetify = new Vuetify();
   });
@@ -54,7 +71,7 @@ describe('Item create page component', () => {
     inputs.at(4).setValue(form.listPrice);
 
     wrapper.find('button').trigger('click');
-    await waitTimer(20);
+    await waitTimer(10);
     expect(methodSpy).toHaveBeenCalledTimes(1);
   });
 });

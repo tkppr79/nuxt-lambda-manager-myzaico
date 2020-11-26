@@ -34,6 +34,23 @@ describe('Item edit page component', () => {
     listPrice: '2000',
   };
 
+  window.alert = jest.fn((message) => console.log(message));
+
+  const getFetchPromise = Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ Item: item }),
+  });
+  const putFetchPromise = Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({}),
+  });
+  window.fetch = jest.fn((url, options) => {
+    if(options.method === 'PUT')
+      return putFetchPromise;
+    else if(options.method === 'GET')
+      return getFetchPromise;
+  });
+
   beforeEach(() => {
     vuetify = new Vuetify();
   });
@@ -43,8 +60,7 @@ describe('Item edit page component', () => {
       vuetify,
       mocks: { $route },
     });
-    await waitTimer(20);
-    wrapper.vm.form = item;
+    await waitTimer(10);
 
     expect(wrapper.vm.form.tags).toBe(item.tags);
     expect(wrapper.vm.form.name).toBe(item.name);
@@ -75,8 +91,7 @@ describe('Item edit page component', () => {
       vuetify,
       mocks: { $route },
     });
-    await waitTimer(20);
-    wrapper.vm.form = item;
+    await waitTimer(10);
 
     const inputs = wrapper.findAll('input');
     inputs.at(0).setValue(form.tags);
@@ -87,7 +102,7 @@ describe('Item edit page component', () => {
     inputs.at(4).setValue(form.listPrice);
 
     wrapper.find('button').trigger('click');
-    await waitTimer(20);
+    await waitTimer(10);
     expect(methodSpy).toHaveBeenCalledTimes(1);
   });
 });

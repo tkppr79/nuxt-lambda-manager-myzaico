@@ -3,11 +3,44 @@ import IndexPage from '@/pages/index.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import { waitTimer } from '@/test/helpers';
+import mockStore from '@/utils/mock-store';
 
 Vue.use(Vuetify);
 
 describe('Index page component', () => {
   let vuetify;
+
+  const filterSets = [
+    {
+      id: '001',
+      condition: 'OR',
+      type: 'text',
+      filters: [{ checkbox: false, targetColumn: { label: 'アイテム名', value: 'name' }, searchString: 'Item_1'}],
+    },
+    {
+      id: '002',
+      condition: 'OR',
+      type: 'range',
+      filters: [{ checkbox: false, targetColumn: { label: '定価', value: 'listPrice' }, range: { start: 7000, end: 8000 } }],
+    }
+  ];
+
+  window.alert = jest.fn((message) => console.log(message));
+
+  const itemsFetchPromise = Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ Items: mockStore.state.items }),
+  });
+  const filterSetsFetchPromise = Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ Item: { filterSets } }),
+  });
+  window.fetch = jest.fn((url) => {
+    if(url.indexOf('items') != -1)
+      return itemsFetchPromise;
+    else if(url.indexOf('users') != -1)
+      return filterSetsFetchPromise;
+  });
 
   beforeEach(() => {
     vuetify = new Vuetify();
@@ -21,24 +54,7 @@ describe('Index page component', () => {
       },
     });
 
-    await waitTimer(20);
-
-    wrapper.vm.filterSets = [
-      {
-        id: '001',
-        condition: 'OR',
-        type: 'text',
-        filters: [{ checkbox: false, targetColumn: { label: 'アイテム名', value: 'name' }, searchString: 'Item_1'}],
-      },
-      {
-        id: '002',
-        condition: 'OR',
-        type: 'range',
-        filters: [{ checkbox: false, targetColumn: { label: '定価', value: 'listPrice' }, range: { start: 7000, end: 8000 } }],
-      }
-    ];
-
-    await Vue.nextTick();
+    await waitTimer(10);
 
     const table = wrapper.find('table');
     expect(table.html()).toContain('testItem_1');

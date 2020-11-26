@@ -77,7 +77,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import FilterList from '@/components/FilterList.vue';
-import { getItems, deleteItem, getFilterSets } from '@/utils/mock-api';
 import { Item, FilterSet, Filter, Range } from '@/types';
 
 export default Vue.extend({
@@ -130,7 +129,28 @@ export default Vue.extend({
   },
   methods: {
     async deleteItem(id: number){
-      this.items = await deleteItem(id);
+      const url = `https://${process.env.API_HOST}/items`;
+      const options = {
+        method: 'DELETE',
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": `${process.env.API_KEY}`,
+        },
+        body: JSON.stringify({
+          id,
+        }),
+      };
+
+      try {
+        const response: Response = await fetch(url, options);
+
+        if(response.ok){
+          this.items = this.items.filter(item => item.id !== id);
+          alert('アイテムを削除しました');
+        }
+      } catch (err) {
+        console.error('[ ERR ]', err);
+      }
     },
     applyFilters(rawItems: Item[], filterSets: FilterSet[], callback: Function): Item[]{
       let filters: Filter[] = []
@@ -220,12 +240,46 @@ export default Vue.extend({
   },
   created(){
     const fetchItems = (async () => {
-      const fetchedItems = await getItems();
-      this.items = JSON.parse(JSON.stringify(fetchedItems));
+      const url = `https://${process.env.API_HOST}/items`;
+      const options = {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": `${process.env.API_KEY}`,
+        },
+      };
+
+      try {
+        const response: Response = await fetch(url, options);
+        const fetchedData = await response.json();
+        const fetchedItems = fetchedData.Items;
+
+        if(response.ok)
+          this.items = fetchedItems;
+      } catch (err) {
+        console.error('[ ERR ]', err);
+      }
     })();
     const fetchFilterSets = (async () => {
-      const fetchedFilterSets = await getFilterSets();
-      this.filterSets = JSON.parse(JSON.stringify(fetchedFilterSets));
+      const url = `https://${process.env.API_HOST}/users/${process.env.ADMIN_USER_ID}`;
+      const options = {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": `${process.env.API_KEY}`,
+        },
+      };
+
+      try {
+        const response: Response = await fetch(url, options);
+        const fetchedData = await response.json();
+        const fetchedFilterSets = fetchedData.Item.filterSets;
+
+        if(response.ok)
+          this.filterSets = fetchedFilterSets;
+      } catch (err) {
+        console.error('[ ERR ]', err);
+      }
     })();
   },
 });

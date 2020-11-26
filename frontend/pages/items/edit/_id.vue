@@ -58,7 +58,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { getItem, putItem } from '@/utils/mock-api';
 import { Item } from '@/types';
 
 export default Vue.extend({
@@ -73,15 +72,46 @@ export default Vue.extend({
   },
   methods: {
     async submit(){
-      const newItem = JSON.parse(JSON.stringify(this.form));
-      newItem.listPrice = parseInt(newItem.listPrice, 10);
-      await putItem(newItem);
+      const url = `https://${process.env.API_HOST}/items`;
+      const options = {
+        method: 'PUT',
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": `${process.env.API_KEY}`,
+        },
+        body: JSON.stringify({ item: this.form }),
+      };
+
+      try {
+        const response = await fetch(url, options);
+
+        if(response.ok)
+          alert('アイテムを更新しました');
+      } catch (err) {
+        console.error('[ ERR ]', err);
+      }
     }
   },
   created(){
     const fetchItem = (async () => {
-      const fetchedItem = await getItem(parseInt(this.$route.params.id, 10));
-      this.form = JSON.parse(JSON.stringify(fetchedItem));
+      const url = `https://${process.env.API_HOST}/items/${this.$route.params.id}`;
+      const options = {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": `${process.env.API_KEY}`,
+        },
+      };
+
+      try {
+        const response = await fetch(url, options);
+        const fetchedData = await response.json();
+
+        if(response.ok)
+          this.form = fetchedData.Item;
+      } catch (err) {
+        console.error('[ ERR ]', err);
+      }
     })();
   },
 });

@@ -57,7 +57,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { postItem } from '@/utils/mock-api';
 import { Item } from '@/types';
 
 export default Vue.extend({
@@ -79,10 +78,67 @@ export default Vue.extend({
   },
   methods: {
     async submit(){
-      const newItem = JSON.parse(JSON.stringify(this.form));
-      newItem.listPrice = parseInt(newItem.listPrice, 10);
-      await postItem(newItem);
-    }
+      const getUrl = `https://${process.env.API_HOST}/items`;
+      const getOptions = {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": `${process.env.API_KEY}`,
+        },
+      };
+
+      let fetchedItems;
+
+      try {
+        const getResponse = await fetch(getUrl, getOptions);
+        const getData = await getResponse.json();
+        fetchedItems = getData.Items;
+      } catch (err) {
+        console.error('[ ERR ]', err);
+      }
+
+      let lastID;
+
+      if(fetchedItems.length){
+        const sortedItems = this.sortItemsById(fetchedItems);
+        lastID = sortedItems[sortedItems.length - 1].id;
+      }else{
+        lastID = 0;
+      }
+
+      this.form.id = lastID + 1;
+
+      const postUrl = `https://${process.env.API_HOST}/items`;
+      const postOptions = {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": `${process.env.API_KEY}`,
+        },
+        body: JSON.stringify({ item: this.form }),
+      };
+
+      try {
+        const postResponse: Response = await fetch(postUrl, postOptions);
+
+        if(postResponse.ok)
+          alert('アイテムが登録されました');
+      } catch (err) {
+        console.error('[ ERR ]', err);
+      }
+    },
+    sortItemsById(items: Item[]): Item[] {
+      items.sort((a,b) => {
+        if (a.id > b.id)
+          return 1;
+        if (a.id < b.id)
+          return -1;
+
+        return 0;
+      });
+
+      return items;
+    },
   },
 });
 </script>

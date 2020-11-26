@@ -56,7 +56,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { getItem } from '@/utils/mock-api';
 import { Item } from '@/types';
 
 export default Vue.extend({
@@ -77,7 +76,24 @@ export default Vue.extend({
   },
   created(){
     const fetchItem = (async () => {
-      this.item = await getItem(parseInt(this.$route.params.id, 10));
+      const url = `https://${process.env.API_HOST}/items/${this.$route.params.id}`;
+      const options = {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": `${process.env.API_KEY}`,
+        },
+      };
+
+      try {
+        const response = await fetch(url, options);
+        const fetchedData = await response.json();
+
+        if(response.ok)
+          this.item = fetchedData.Item;
+      } catch (err) {
+        console.error('[ ERR ]', err);
+      }
     })();
   },
 });

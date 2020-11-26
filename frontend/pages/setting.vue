@@ -79,7 +79,6 @@
 import Vue from 'vue';
 import FilterSetEditor from '@/components/FilterSetEditor.vue';
 import FilterList from '@/components/FilterList.vue';
-import { getFilterSets, postFilterSets } from '@/utils/mock-api';
 import { FilterSet } from '@/types';
 
 export default Vue.extend({
@@ -141,14 +140,52 @@ export default Vue.extend({
       this.filterSets = this.filterSets.filter(filterSet => filterSet.id !== id);
     },
     async saveFilterSets(){
-      const clone = JSON.parse(JSON.stringify(this.filterSets));
-      await postFilterSets(clone);
+      const url = `https://${process.env.API_HOST}/users`;
+      const options = {
+        method: 'PUT',
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": `${process.env.API_KEY}`,
+        },
+        body: JSON.stringify({
+          user: {
+            id: parseInt(process.env.ADMIN_USER_ID as string, 10),
+            filterSets: this.filterSets
+          }
+        }),
+      };
+
+      try {
+        const response = await fetch(url, options);
+
+        if(response.ok)
+          alert('フィルター設定を保存しました');
+      } catch (err) {
+        console.error('[ ERR ]', err);
+      }
     },
   },
   created(){
     const fetchFilterSets = (async () => {
-      const fetchedFilterSets = await getFilterSets();
-      this.filterSets = JSON.parse(JSON.stringify(fetchedFilterSets));
+      const url = `https://${process.env.API_HOST}/users/${process.env.ADMIN_USER_ID}`;
+      const options = {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": `${process.env.API_KEY}`,
+        },
+      };
+
+      try {
+        const response: Response = await fetch(url, options);
+        const fetchedData = await response.json();
+        const fetchedFilterSets = fetchedData.Item.filterSets;
+
+        if(response.ok)
+          this.filterSets = fetchedFilterSets;
+      } catch (err) {
+        console.error('[ ERR ]', err);
+      }
     })();
   },
 });

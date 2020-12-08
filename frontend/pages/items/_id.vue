@@ -74,7 +74,7 @@ export default Vue.extend({
         return [];
     },
   },
-  created(){
+  mounted(){
     const fetchItem = (async () => {
       const url = `https://${process.env.API_HOST}/items/${this.$route.params.id}`;
       const options = {
@@ -82,6 +82,7 @@ export default Vue.extend({
         headers: {
           "Content-Type": "application/json",
           "x-api-key": `${process.env.API_KEY}`,
+          "Authorization": this.$store.getters['user/user'].idToken,
         },
       };
 

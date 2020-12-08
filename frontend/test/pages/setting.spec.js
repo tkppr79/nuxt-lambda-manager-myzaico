@@ -8,8 +8,6 @@ import { waitTimer } from '@/test/helpers';
 Vue.use(Vuetify);
 
 describe('Setting page component', () => {
-  let vuetify;
-
   window.alert = jest.fn((message) => console.log(message));
 
   const getFetchPromise = Promise.resolve({
@@ -27,12 +25,23 @@ describe('Setting page component', () => {
       return getFetchPromise;
   });
 
+  let vuetify;
+
   beforeEach(() => {
     vuetify = new Vuetify();
   });
 
+  const $store = {
+    getters: {
+      "user/user": { id: 0, name: '', idToken: '', accessToken: '', filterSets: [] }
+    },
+  };
+
   it('add filterSet', async () => {
-    const wrapper = mount(SettingPage, { vuetify });
+    const wrapper = mount(SettingPage, {
+      vuetify,
+      mocks: { $store },
+     });
     await waitTimer(10);
 
     wrapper.find('.v-select').vm.$emit('input', 'tag');

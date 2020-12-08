@@ -135,6 +135,7 @@ export default Vue.extend({
         headers: {
           "Content-Type": "application/json",
           "x-api-key": `${process.env.API_KEY}`,
+          "Authorization": this.$store.getters['user/user'].idToken,
         },
         body: JSON.stringify({
           id,
@@ -238,7 +239,7 @@ export default Vue.extend({
       return items.filter((item) => item.tags.indexOf(tag) !== -1);
     },
   },
-  created(){
+  mounted(){
     const fetchItems = (async () => {
       const url = `https://${process.env.API_HOST}/items`;
       const options = {
@@ -246,6 +247,7 @@ export default Vue.extend({
         headers: {
           "Content-Type": "application/json",
           "x-api-key": `${process.env.API_KEY}`,
+          "Authorization": this.$store.getters['user/user'].idToken,
         },
       };
 
@@ -267,6 +269,7 @@ export default Vue.extend({
         headers: {
           "Content-Type": "application/json",
           "x-api-key": `${process.env.API_KEY}`,
+          "Authorization": this.$store.getters['user/user'].idToken,
         },
       };
 

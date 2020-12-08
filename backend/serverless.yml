@@ -13,6 +13,7 @@ provider:
   environment:
     DYNAMODB_ITEM_TABLE: ${self:service}-${opt:stage}-items
     DYNAMODB_USER_TABLE: ${self:service}-${opt:stage}-users
+    CLIENT_ID: !Ref UserPoolClient
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -35,6 +36,9 @@ functions:
           method: post
           cors: true
           private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
   updateItem:
     handler: handlers/items/put.handler
     events:
@@ -43,6 +47,9 @@ functions:
           method: put
           cors: true
           private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
   deleteItem:
     handler: handlers/items/delete.handler
     events:
@@ -51,6 +58,9 @@ functions:
           method: delete
           cors: true
           private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
   getItem:
     handler: handlers/items/get.handler
     events:
@@ -59,6 +69,9 @@ functions:
           method: get
           cors: true
           private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
   getAllItems:
     handler: handlers/items/getAll.handler
     events:
@@ -67,6 +80,9 @@ functions:
           method: get
           cors: true
           private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
   updateUser:
     handler: handlers/users/put.handler
     events:
@@ -75,6 +91,9 @@ functions:
           method: put
           cors: true
           private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
   getUser:
     handler: handlers/users/get.handler
     events:
@@ -83,32 +102,48 @@ functions:
           method: get
           cors: true
           private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
+  signup:
+    handler: handlers/auth/signup.handler
+    events:
+      - http:
+          path: signup
+          method: post
+          cors: true
+          private: true
+  login:
+    handler: handlers/auth/login.handler
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+          private: true
+  logout:
+    handler: handlers/auth/logout.handler
+    events:
+      - http:
+          path: logout
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
+  getCurrentUser:
+    handler: handlers/auth/getCurrentUser.handler
+    events:
+      - http:
+          path: current-user
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
 
 resources:
-  Resources:
-    TestItemsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:provider.environment.DYNAMODB_ITEM_TABLE}
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: N
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-    TestUsersTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:provider.environment.DYNAMODB_USER_TABLE}
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: N
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
+  - ${file(resources/dynamodb.yml)}
+  - ${file(resources/cognito.yml)}

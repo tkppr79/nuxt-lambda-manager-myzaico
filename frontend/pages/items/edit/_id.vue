@@ -47,7 +47,7 @@
             </v-menu>
 
             <v-card-actions>
-              <v-btn class="info mx-auto" @click="submit">更新</v-btn>
+              <v-btn elevation="0" class="info mx-auto" @click="submit">更新</v-btn>
             </v-card-actions>
           </v-form>
         </v-col>
@@ -78,6 +78,7 @@ export default Vue.extend({
         headers: {
           "Content-Type": "application/json",
           "x-api-key": `${process.env.API_KEY}`,
+          "Authorization": this.$store.getters['user/user'].idToken,
         },
         body: JSON.stringify({ item: this.form }),
       };
@@ -92,7 +93,7 @@ export default Vue.extend({
       }
     }
   },
-  created(){
+  mounted(){
     const fetchItem = (async () => {
       const url = `https://${process.env.API_HOST}/items/${this.$route.params.id}`;
       const options = {
@@ -100,6 +101,7 @@ export default Vue.extend({
         headers: {
           "Content-Type": "application/json",
           "x-api-key": `${process.env.API_KEY}`,
+          "Authorization": this.$store.getters['user/user'].idToken,
         },
       };
 

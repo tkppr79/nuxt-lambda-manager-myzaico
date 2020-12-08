@@ -8,8 +8,6 @@ import mockStore from '@/utils/mock-store';
 Vue.use(Vuetify);
 
 describe('Index page component', () => {
-  let vuetify;
-
   const filterSets = [
     {
       id: '001',
@@ -42,6 +40,13 @@ describe('Index page component', () => {
       return filterSetsFetchPromise;
   });
 
+  let vuetify;
+  const $store = {
+    getters: {
+      "user/user": { id: 0, name: '', idToken: '', accessToken: '', filterSets: [] }
+    },
+  };
+
   beforeEach(() => {
     vuetify = new Vuetify();
   });
@@ -49,9 +54,8 @@ describe('Index page component', () => {
   it('filter items by text & range', async () => {
     const wrapper = mount(IndexPage, {
       vuetify,
-      stubs: {
-        RouterLink: RouterLinkStub
-      },
+      mocks: { $store },
+      stubs: { RouterLink: RouterLinkStub, },
     });
 
     await waitTimer(10);

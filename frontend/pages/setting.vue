@@ -146,6 +146,7 @@ export default Vue.extend({
         headers: {
           "Content-Type": "application/json",
           "x-api-key": `${process.env.API_KEY}`,
+          "Authorization": this.$store.getters['user/user'].idToken,
         },
         body: JSON.stringify({
           user: {
@@ -165,7 +166,7 @@ export default Vue.extend({
       }
     },
   },
-  created(){
+  mounted(){
     const fetchFilterSets = (async () => {
       const url = `https://${process.env.API_HOST}/users/${process.env.ADMIN_USER_ID}`;
       const options = {
@@ -173,6 +174,7 @@ export default Vue.extend({
         headers: {
           "Content-Type": "application/json",
           "x-api-key": `${process.env.API_KEY}`,
+          "Authorization": this.$store.getters['user/user'].idToken,
         },
       };
 

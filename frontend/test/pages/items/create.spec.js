@@ -7,8 +7,6 @@ import { waitTimer } from '@/test/helpers';
 Vue.use(Vuetify);
 
 describe('Item create page component', () => {
-  let vuetify;
-
   const form = {
     tags: 'Test Tag',
     name: 'Test Item',
@@ -35,9 +33,17 @@ describe('Item create page component', () => {
       return getFetchPromise;
   });
 
+  let vuetify;
+
   beforeEach(() => {
     vuetify = new Vuetify();
   });
+
+  const $store = {
+    getters: {
+      "user/user": { id: 0, name: '', idToken: '', accessToken: '', filterSets: [] }
+    },
+  };
 
   it('update form state', () => {
     const wrapper = mount(ItemCreatePage, { vuetify });
@@ -60,7 +66,10 @@ describe('Item create page component', () => {
 
   it('can submit', async () => {
     const methodSpy = jest.spyOn(ItemCreatePage.options.methods, 'submit');
-    const wrapper = mount(ItemCreatePage, { vuetify });
+    const wrapper = mount(ItemCreatePage, {
+      vuetify,
+      mocks: { $store },
+    });
 
     const inputs = wrapper.findAll('input');
     inputs.at(0).setValue(form.tags);

@@ -7,14 +7,6 @@ import { waitTimer } from '@/test/helpers';
 Vue.use(Vuetify);
 
 describe('Item edit page component', () => {
-  let vuetify;
-  let $route;
-  $route = {
-    params: {
-      id: '1',
-    }
-  };
-
   const item = {
     id: 0,
     tags: 'Test_tag',
@@ -51,14 +43,28 @@ describe('Item edit page component', () => {
       return getFetchPromise;
   });
 
+  let vuetify;
+
   beforeEach(() => {
     vuetify = new Vuetify();
   });
 
+  const $route = {
+    params: {
+      id: '1',
+    }
+  };
+
+  const $store = {
+    getters: {
+      "user/user": { id: 0, name: '', idToken: '', accessToken: '', filterSets: [] }
+    },
+  };
+
   it('update form state', async () => {
     const wrapper = mount(ItemEditPage, {
       vuetify,
-      mocks: { $route },
+      mocks: { $route, $store },
     });
     await waitTimer(10);
 
@@ -89,7 +95,7 @@ describe('Item edit page component', () => {
     const methodSpy = jest.spyOn(ItemEditPage.options.methods, 'submit');
     const wrapper = mount(ItemEditPage, {
       vuetify,
-      mocks: { $route },
+      mocks: { $route, $store },
     });
     await waitTimer(10);
 

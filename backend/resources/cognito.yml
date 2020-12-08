@@ -1,0 +1,56 @@
+Resources:
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: ${self:service}-${self:provider.stage}-userpool
+      UsernameConfiguration:
+        CaseSensitive: false
+      Schema:
+        - AttributeDataType: Number
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Name: uid
+          Required: false
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          RequireUppercase: true
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+      MfaConfiguration: OFF
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      ClientName: ${self:service}-${self:provider.stage}-client
+      TokenValidityUnits:
+        RefreshToken: minutes
+        IdToken: minutes
+        AccessToken: minutes
+      RefreshTokenValidity: 43200
+      AccessTokenValidity: 60
+      IdTokenValidity: 60
+      GenerateSecret: False
+      ExplicitAuthFlows:
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      PreventUserExistenceErrors: ENABLED
+
+  ApiGatewayAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    DependsOn:
+      - ApiGatewayRestApi
+    Properties:
+      Name: ${self:service}-${self:provider.stage}-authorizer
+      RestApiId: !Ref ApiGatewayRestApi
+      IdentitySource: method.request.header.Authorization
+      Type: COGNITO_USER_POOLS
+      ProviderARNs:
+        - Fn::GetAtt: [UserPool, Arn]

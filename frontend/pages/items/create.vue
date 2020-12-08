@@ -46,7 +46,7 @@
             </v-menu>
 
             <v-card-actions>
-              <v-btn class="info mx-auto" @click="submit">登録</v-btn>
+              <v-btn elevation="0" class="info mx-auto" @click="submit">登録</v-btn>
             </v-card-actions>
           </v-form>
         </v-col>
@@ -84,6 +84,7 @@ export default Vue.extend({
         headers: {
           "Content-Type": "application/json",
           "x-api-key": `${process.env.API_KEY}`,
+          "Authorization": this.$store.getters['user/user'].idToken,
         },
       };
 
@@ -114,6 +115,7 @@ export default Vue.extend({
         headers: {
           "Content-Type": "application/json",
           "x-api-key": `${process.env.API_KEY}`,
+          "Authorization": this.$store.getters['user/user'].idToken,
         },
         body: JSON.stringify({ item: this.form }),
       };
@@ -121,8 +123,10 @@ export default Vue.extend({
       try {
         const postResponse: Response = await fetch(postUrl, postOptions);
 
-        if(postResponse.ok)
+        if(postResponse.ok){
+          this.form = { id: 0, tags: '', name: '', sku: '', manufacturer: '', releaseDate: '', listPrice: 0 };
           alert('アイテムが登録されました');
+        }
       } catch (err) {
         console.error('[ ERR ]', err);
       }

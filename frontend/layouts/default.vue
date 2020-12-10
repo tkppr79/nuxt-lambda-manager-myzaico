@@ -25,9 +25,13 @@ export default Vue.extend({
       const token = this.getCookie('accessToken');
 
       if(!token){
-        this.$store.commit('user/setUser', { id: 0, name: '', idToken: '', accessToken: '', filterSets: [] });
-        this.$store.commit('user/setInitialization', true);
-        return;
+        if(this.$route.path === '/signup' || this.$route.path === '/login'){
+          this.$store.commit('user/setInitialization', true);
+          return;
+        }else{
+          window.location.replace(`${window.location.protocol}//${window.location.host}/login`);
+          return;
+        }
       }
 
       const url = `https://${process.env.API_HOST}/current-user`;

@@ -11,14 +11,21 @@
     <v-col col="12" lg="6">
       <v-card outlined class="mx-auto mt-5">
         <v-col col="12" lg="6" class="mx-auto">
-          <v-form class="mt-3">
-            <v-text-field v-model="form.name" label="ユーザー名" outlined dense />
+          <v-form ref="form" v-model="valid" lazy-validation class="mt-3">
+            <v-text-field
+              v-model="form.name"
+              label="ユーザー名"
+              :rules="[value => !!value || 'ユーザー名は必須です。']"
+              outlined
+              dense
+            />
 
             <v-text-field
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
               label="パスワード"
               v-model="form.password"
+              :rules="[value => !!value || 'パスワードは必須です。']"
               outlined
               dense
               @click:append="showPassword = !showPassword"
@@ -42,15 +49,20 @@ export default Vue.extend({
     form: { name: string, password: string },
     menu: boolean,
     showPassword: boolean,
+    valid: boolean,
   } {
     return {
       form: { name: '', password: '' },
       menu: false,
       showPassword : false,
+      valid: true,
     };
   },
   methods: {
     async submit(){
+      const formRef: any = this.$refs.form;
+      if(!formRef.validate()) return;
+
       const url = `https://${process.env.API_HOST}/login`;
       const options = {
         method: 'POST',

@@ -12,16 +12,57 @@
     <v-col col="12" lg="6">
       <v-card outlined class="mx-auto mt-5">
         <v-col col="12" lg="6" class="mx-auto">
-          <v-form class="mt-3">
+          <v-form ref="form" v-model="valid" lazy-validation class="mt-3">
             <v-text-field v-model="form.tags" label="タグ" outlined dense class="centered-input" />
 
-            <v-text-field v-model="form.name" label="アイテム名" outlined dense class="centered-input" />
+            <v-text-field
+              v-model="form.name"
+              label="アイテム名"
+              :rules="[
+                value => !!value || 'アイテム名は必須です。',
+                value => !!value && value.length < 33 || 'アイテム名は32文字以内で入力してください。',
+              ]"
+              outlined
+              dense
+              class="centered-input"
+            />
 
-            <v-text-field v-model="form.sku" label="SKU" outlined dense class="centered-input" />
+            <v-text-field
+              v-model="form.sku"
+              label="SKU"
+              :rules="[
+                value => !!value || 'SKUは必須です。',
+                value => !!value && value.length < 33 || 'SKUは32文字以内で入力してください。',
+              ]"
+              outlined
+              dense
+              class="centered-input"
+            />
 
-            <v-text-field v-model="form.manufacturer" label="メーカー" outlined dense class="centered-input" />
+            <v-text-field
+              v-model="form.manufacturer"
+              label="メーカー"
+              :rules="[
+                value => !!value || 'メーカーは必須です。',
+                value => !!value && value.length < 33 || 'メーカーは32文字以内で入力してください。',
+              ]"
+              outlined
+              dense
+              class="centered-input"
+            />
 
-            <v-text-field v-model="form.listPrice" label="価格" outlined dense class="centered-input" />
+            <v-text-field
+              v-model.number="form.listPrice"
+              label="価格"
+              type="number"
+              :rules="[
+                value => !!value || '価格は必須です。',
+                value => !!value && value.toString().length < 11 || '価格は10桁以内で入力してください。',
+              ]"
+              outlined
+              dense
+              class="centered-input"
+            />
 
             <v-menu
               v-model="menu"
@@ -37,6 +78,7 @@
                   v-model="form.releaseDate"
                   v-bind="attrs"
                   v-on="on"
+                  :rules="[value => !!value || '発売日は必須です。']"
                   outlined
                   dense
                   readonly
@@ -64,14 +106,19 @@ export default Vue.extend({
   data(): {
     form: Item | null,
     menu: boolean,
+    valid: boolean,
   } {
     return {
       form: null,
       menu: false,
+      valid: true,
     };
   },
   methods: {
     async submit(){
+      const formRef: any = this.$refs.form;
+      if(!formRef.validate()) return;
+
       const url = `https://${process.env.API_HOST}/items`;
       const options = {
         method: 'PUT',

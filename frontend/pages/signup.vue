@@ -13,16 +13,39 @@
 
       <v-card outlined class="mx-auto mt-5">
         <v-col col="12" lg="6" class="mx-auto">
-          <v-form class="mt-3">
-            <v-text-field v-model="form.name" label="ユーザー名" outlined dense />
+          <v-form ref="form" v-model="valid" class="mt-3" lazy-validation>
+            <v-text-field
+              v-model="form.name"
+              label="ユーザー名"
+              :rules="[
+                value => !!value || 'ユーザー名は必須です。',
+                value => !!value && value.length > 5 || 'ユーザー名は6文字以上必要です。',
+              ]"
+              outlined
+              dense
+            />
 
-            <v-text-field v-model="form.email" label="メール" outlined dense />
+            <v-text-field
+              v-model="form.email"
+              label="メール"
+              outlined
+              dense
+              :rules="[
+                value => !!value || 'Eメールは必須です。',
+                value => /^(([^<>()[\]\\.,;:\s@]+(\.[^<>()[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value) || '適切なEメールのフォーマットではありません。',
+              ]"
+            />
 
             <v-text-field
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
               label="パスワード"
               v-model="form.password"
+              :rules="[
+                value => !!value || 'パスワードは必須です。',
+                value => !!value && value.length > 7 || 'パスワードは8文字以上必要です。',
+                value => /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\^$*.\[\]{}\(\)?\-“!@#%&\/,><\’:;|_~`])\S{8,99}$/.test(value) || 'パスワードは半角で、数字/小文字/大文字/特殊文字をそれぞれ1文字以上必要です。',
+              ]"
               outlined
               dense
               @click:append="showPassword = !showPassword"
@@ -46,15 +69,20 @@ export default Vue.extend({
     form: { name: string, email: string, password: string },
     menu: boolean,
     showPassword: boolean,
+    valid: boolean,
   } {
     return {
       form: { name: '', email: '', password: '' },
       menu: false,
       showPassword : false,
+      valid: true,
     };
   },
   methods: {
     async submit(){
+      const formRef: any = this.$refs.form;
+      if(!formRef.validate()) return;
+
       const url = `https://${process.env.API_HOST}/signup`;
       const options = {
         method: 'POST',
@@ -70,6 +98,7 @@ export default Vue.extend({
 
         if(response.ok){
           this.form = { name: '', email: '', password: '' };
+          formRef.resetValidation();
           alert('ユーザーが作成されました');
         }
       } catch (err) {

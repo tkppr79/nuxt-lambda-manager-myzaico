@@ -31,6 +31,8 @@ https://nuxt-lambda-manager-myzaico.vercel.app
 - ページネーション　　　　　　 * Vuetify
 - 表示件数設定　　　　　　　　 * Vuetify
 - ソート　　　　　　　　　　　 * Vuetify
+- バリデーション　　　　　　　 * Vuetify
+- デイトピッカー　　　　　　　 * Vuetify
 <br>
 <br>
 

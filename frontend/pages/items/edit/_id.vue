@@ -134,7 +134,7 @@ export default Vue.extend({
         const response = await fetch(url, options);
 
         if(response.ok)
-          alert('アイテムを更新しました');
+          this.$root.$emit('notify', { text: `アイテムを更新しました。`, type: 'info' });
       } catch (err) {
         console.error('[ ERR ]', err);
       }

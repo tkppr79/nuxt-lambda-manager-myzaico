@@ -115,7 +115,7 @@ export default Vue.extend({
     },
     addFilterSet(type: string) {
       if(!type){
-        window.alert('フィルタータイプを選択してください');
+        this.$root.$emit('notify', { text: `フィルタータイプを選択してください。`, type: 'alert' });
         return;
       }
 
@@ -160,7 +160,7 @@ export default Vue.extend({
         const response = await fetch(url, options);
 
         if(response.ok)
-          alert('フィルター設定を保存しました');
+          this.$root.$emit('notify', { text: `フィルター設定を保存しました。`, type: 'info' });
       } catch (err) {
         console.error('[ ERR ]', err);
       }

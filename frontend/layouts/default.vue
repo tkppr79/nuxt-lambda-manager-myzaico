@@ -7,6 +7,7 @@
       </v-container>
     </v-main>
     <Footer />
+    <Notification />
   </v-app>
 </template>
 
@@ -14,6 +15,7 @@
 import Vue from 'vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
+import Notification from '@/components/Notification.vue';
 
 export default Vue.extend({
   components:{

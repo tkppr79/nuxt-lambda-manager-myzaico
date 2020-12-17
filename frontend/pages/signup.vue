@@ -99,7 +99,7 @@ export default Vue.extend({
         if(response.ok){
           this.form = { name: '', email: '', password: '' };
           formRef.resetValidation();
-          alert('ユーザーが作成されました');
+          this.$root.$emit('notify', { text: `ユーザーが作成されました。`, type: 'info' });
         }
       } catch (err) {
         console.error('[ ERR ]', err);

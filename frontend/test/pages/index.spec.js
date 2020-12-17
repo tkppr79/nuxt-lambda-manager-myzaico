@@ -23,8 +23,6 @@ describe('Index page component', () => {
     }
   ];
 
-  window.alert = jest.fn((message) => console.log(message));
-
   const itemsFetchPromise = Promise.resolve({
     ok: true,
     json: () => Promise.resolve({ Items: mockStore.state.items }),

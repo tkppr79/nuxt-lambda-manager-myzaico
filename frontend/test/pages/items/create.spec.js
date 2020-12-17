@@ -12,11 +12,9 @@ describe('Item create page component', () => {
     name: 'Test Item',
     sku: 'Test SKU',
     manufacturer: 'Test Manufacturer',
-    listPrice: 'Test Price',
+    listPrice: 0,
     releaseDate: '2000-01-01',
   };
-
-  window.alert = jest.fn((message) => console.log(message));
 
   const getFetchPromise = Promise.resolve({
     ok: true,

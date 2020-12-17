@@ -147,7 +147,7 @@ export default Vue.extend({
 
         if(response.ok){
           this.items = this.items.filter(item => item.id !== id);
-          alert('アイテムを削除しました');
+          this.$root.$emit('notify', { text: `アイテムを削除しました。`, type: 'info' });
         }
       } catch (err) {
         console.error('[ ERR ]', err);

@@ -166,7 +166,7 @@ export default Vue.extend({
         if(postResponse.ok){
           this.form = { id: 0, tags: '', name: '', sku: '', manufacturer: '', releaseDate: '', listPrice: 0 };
           formRef.resetValidation();
-          alert('アイテムが登録されました');
+          this.$root.$emit('notify', { text: `アイテムが登録されました。`, type: 'info' });
         }
       } catch (err) {
         console.error('[ ERR ]', err);

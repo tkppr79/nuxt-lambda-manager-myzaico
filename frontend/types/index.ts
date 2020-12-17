@@ -29,3 +29,9 @@ export type Range = {
   start: number;
   end: number;
 };
+
+export type NotificationOptions = {
+  text: string,
+  type: string,
+  timeout?: number,
+};

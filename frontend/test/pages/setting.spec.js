@@ -8,8 +8,6 @@ import { waitTimer } from '@/test/helpers';
 Vue.use(Vuetify);
 
 describe('Setting page component', () => {
-  window.alert = jest.fn((message) => console.log(message));
-
   const getFetchPromise = Promise.resolve({
     ok: true,
     json: () => Promise.resolve({ Item: { filterSets: [] } }),

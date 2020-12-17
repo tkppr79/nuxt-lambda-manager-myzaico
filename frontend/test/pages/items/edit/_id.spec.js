@@ -14,7 +14,7 @@ describe('Item edit page component', () => {
     sku: 'AAA',
     manufacturer: 'corp_A',
     releaseDate: '2000-01-01',
-    listPrice: '1000',
+    listPrice: 1000,
   };
 
   const form = {
@@ -23,10 +23,8 @@ describe('Item edit page component', () => {
     sku: 'BBB',
     manufacturer: 'corp_B',
     releaseDate: '2000-02-02',
-    listPrice: '2000',
+    listPrice: 2000,
   };
-
-  window.alert = jest.fn((message) => console.log(message));
 
   const getFetchPromise = Promise.resolve({
     ok: true,

@@ -44,6 +44,7 @@ export default Vue.extend({
           this.$store.commit('user/setUser', { id: 0, name: '', idToken: '', accessToken: '', filterSets: [] });
           document.cookie = `idToken=; max-age=0; samesite=lax;`;
           document.cookie = `accessToken=; max-age=0; samesite=lax;`;
+          this.$root.$emit('notify', { text: `ログアウトしました。`, type: 'info' });
           this.$router.push('/login');
         }
       } catch (err) {

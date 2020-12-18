@@ -46,6 +46,8 @@ export default Vue.extend({
           document.cookie = `accessToken=; max-age=0; samesite=lax;`;
           this.$root.$emit('notify', { text: `ログアウトしました。`, type: 'info' });
           this.$router.push('/login');
+        }else{
+          this.$root.$emit('notify', { text: fetchedData.errorMessage, type: 'error' });
         }
       } catch (err) {
         console.error('[ ERR ]', err);

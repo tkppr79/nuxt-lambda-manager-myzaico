@@ -1,18 +1,22 @@
 const AWS = require('aws-sdk');
 const cognito = new AWS.CognitoIdentityServiceProvider();
 const dynamo = new AWS.DynamoDB.DocumentClient();
+const { sortItemsById, lambdaErrorResponse } = require('../../utils');
 
 module.exports.handler = async (event) => {
   const data = JSON.parse(event.body);
 
-  if(!data.name || !data.password || !data.email)
-    return { statusCode: 400, headers: { "Access-Control-Allow-Origin": "*" } };
+  if(!data.name || !data.password || !data.email) return { statusCode: 400, headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify({ errorMessage: "全ての項目を入力してください。" }) };
 
-  const fetchedData = await dynamo.scan({ TableName: process.env.DYNAMODB_USER_TABLE }).promise().catch(error => {
-    throw error;
+  let result;
+
+  result = await dynamo.scan({ TableName: process.env.DYNAMODB_USER_TABLE }).promise().catch(error => {
+    return error;
   });
 
-  const users = fetchedData.Items;
+  if(result.statusCode && result.statusCode !== 200) return lambdaErrorResponse(result);
+
+  const users = result.Items;
   let lastID;
   if(users.length){
     const sortedItems = sortItemsById(users);
@@ -26,9 +30,11 @@ module.exports.handler = async (event) => {
     Item: { id: (lastID + 1), filterSets: [] }
   };
 
-  await dynamo.put(payload).promise().catch(error => {
-    throw error;
+  result = await dynamo.put(payload).promise().catch(error => {
+    return error;
   });
+
+  if(result.statusCode && result.statusCode !== 200) return lambdaErrorResponse(result);
 
   const params = {
     ClientId: process.env.CLIENT_ID,
@@ -40,14 +46,16 @@ module.exports.handler = async (event) => {
     ],
   };
 
-  const result = await cognito.signUp(params).promise().catch(error => {
+  result = await cognito.signUp(params).promise().catch(error => {
     dynamo.delete({
       TableName: process.env.DYNAMODB_USER_TABLE,
       Key: { id: (lastID + 1) }
     });
 
-    throw error;
+    return error;
   });
+
+  if(result.statusCode && result.statusCode !== 200) return lambdaErrorResponse(result);
 
   return {
     statusCode: 200,
@@ -55,15 +63,3 @@ module.exports.handler = async (event) => {
     body: JSON.stringify(result),
   };
 };
-
-function sortItemsById(items) {
-  items.sort((a,b) => {
-    if (a.id > b.id)
-      return 1;
-    if (a.id < b.id)
-      return -1;
-    return 0;
-  });
-
-  return items;
-}

@@ -95,11 +95,14 @@ export default Vue.extend({
 
       try {
         const response: Response = await fetch(url, options);
+        const fetchedData = await response.json();
 
         if(response.ok){
           this.form = { name: '', email: '', password: '' };
           formRef.resetValidation();
           this.$root.$emit('notify', { text: `ユーザーが作成されました。`, type: 'info' });
+        }else{
+            this.$root.$emit('notify', { text: fetchedData.errorMessage, type: 'error' });
         }
       } catch (err) {
         console.error('[ ERR ]', err);

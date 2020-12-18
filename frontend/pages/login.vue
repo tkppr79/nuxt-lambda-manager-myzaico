@@ -98,6 +98,8 @@ export default Vue.extend({
           document.cookie = `accessToken=${fetchedData.accessToken}; max-age=3600; samesite=lax;`;
           this.$root.$emit('notify', { text: `【${user.name}】でログインしました。`, type: 'info' });
           this.$router.push('/');
+        }else{
+          this.$root.$emit('notify', { text: fetchedData.errorMessage, type: 'error' });
         }
       } catch (err) {
         console.error('[ ERR ]', err);

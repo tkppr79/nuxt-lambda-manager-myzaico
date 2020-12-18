@@ -1,11 +1,11 @@
 const AWS = require('aws-sdk');
 const cognito = new AWS.CognitoIdentityServiceProvider();
+const { lambdaErrorResponse } = require('../../utils');
 
 module.exports.handler = async (event) => {
   const data = JSON.parse(event.body);
 
-  if(!data.name || !data.password)
-    return { statusCode: 400, headers: { "Access-Control-Allow-Origin": "*" } };
+  if(!data.name || !data.password) return { statusCode: 400, headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify({ errorMessage: "ユーザー名とパスワードは必須項目です。" }) };
 
   const params = {
     AuthFlow: 'USER_PASSWORD_AUTH',
@@ -17,14 +17,18 @@ module.exports.handler = async (event) => {
   };
 
   const initiateAuthResult = await cognito.initiateAuth(params).promise().catch(error => {
-    throw error;
+    return error;
   });
+
+  if(initiateAuthResult.statusCode && initiateAuthResult.statusCode !== 200) return lambdaErrorResponse(initiateAuthResult);
 
   const accessToken = initiateAuthResult.AuthenticationResult.AccessToken;
 
   const getUserResult = await cognito.getUser({ AccessToken: accessToken }).promise().catch(error => {
-    throw error;
+    return error;
   });
+
+  if(getUserResult.statusCode && getUserResult.statusCode !== 200) return lambdaErrorResponse(getUserResult);
 
   return {
     statusCode: 200,

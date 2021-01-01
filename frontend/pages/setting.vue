@@ -159,36 +159,44 @@ export default Vue.extend({
       try {
         const response = await fetch(url, options);
 
-        if(response.ok)
+        if(response.ok){
+          this.$store.commit('user/setFilterSets', this.filterSets);
           this.$root.$emit('notify', { text: `フィルター設定を保存しました。`, type: 'info' });
+        }
       } catch (err) {
         console.error('[ ERR ]', err);
       }
     },
   },
   mounted(){
-    const fetchFilterSets = (async () => {
-      const url = `https://${process.env.API_HOST}/users/${process.env.ADMIN_USER_ID}`;
-      const options = {
-        method: 'GET',
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": `${process.env.API_KEY}`,
-          "Authorization": this.$store.getters['user/user'].idToken,
-        },
-      };
+    if(this.$store.getters['user/user'].filterSets.length){
+      this.filterSets = this.$store.getters['user/user'].filterSets;
+    }else{
+      const fetchFilterSets = (async () => {
+        const url = `https://${process.env.API_HOST}/users/${process.env.ADMIN_USER_ID}`;
+        const options = {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": `${process.env.API_KEY}`,
+            "Authorization": this.$store.getters['user/user'].idToken,
+          },
+        };
 
-      try {
-        const response: Response = await fetch(url, options);
-        const fetchedData = await response.json();
-        const fetchedFilterSets = fetchedData.Item.filterSets;
+        try {
+          const response: Response = await fetch(url, options);
 
-        if(response.ok)
-          this.filterSets = fetchedFilterSets;
-      } catch (err) {
-        console.error('[ ERR ]', err);
-      }
-    })();
+          if(response.ok){
+            const fetchedData = await response.json();
+            const fetchedFilterSets = fetchedData.Item.filterSets;
+            this.$store.commit('user/setFilterSets', fetchedFilterSets);
+            this.filterSets = fetchedFilterSets;
+          }
+        } catch (err) {
+          console.error('[ ERR ]', err);
+        }
+      })();
+    }
   },
 });
 </script>

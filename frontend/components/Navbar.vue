@@ -42,8 +42,8 @@ export default Vue.extend({
 
         if(response.ok){
           this.$store.commit('user/setUser', { id: 0, name: '', idToken: '', accessToken: '', filterSets: [] });
-          document.cookie = `idToken=; max-age=0; samesite=lax;`;
-          document.cookie = `accessToken=; max-age=0; samesite=lax;`;
+          clearTimeout(this.$store.getters['user/timeoutId']);
+          this.$store.commit('user/setTimeoutId', -1);
           this.$root.$emit('notify', { text: `ログアウトしました。`, type: 'info' });
           this.$router.push('/login');
         }else{

@@ -8,7 +8,7 @@ export const state = () => ({
     accessToken: '',
     filterSets: [],
   },
-  initialized: false,
+  timeoutId: -1,
 });
 
 export type UserState = ReturnType<typeof state>
@@ -17,8 +17,11 @@ export const mutations: MutationTree<UserState> = {
   setUser(state, user) {
     state.user = user;
   },
-  setInitialization(state, value){
-    state.initialized = value;
+  setFilterSets(state, filterSets) {
+    state.user.filterSets = filterSets;
+  },
+  setTimeoutId(state, timeoutId) {
+    state.timeoutId = timeoutId;
   },
 };
 
@@ -26,7 +29,7 @@ export const getters: GetterTree<UserState, UserState> = {
   user (state) {
     return state.user;
   },
-  initialized (state) {
-    return state.initialized;
+  timeoutId (state) {
+    return state.timeoutId;
   },
 };

@@ -94,8 +94,10 @@ export default Vue.extend({
           };
 
           this.$store.commit('user/setUser', user);
-          document.cookie = `idToken=${fetchedData.idToken}; max-age=3600; samesite=lax;`;
-          document.cookie = `accessToken=${fetchedData.accessToken}; max-age=3600; samesite=lax;`;
+          const timeoutId = setTimeout(() => {
+            sessionStorage.removeItem('myzaico');
+          }, 3570000);
+          this.$store.commit('user/setTimeoutId', timeoutId);
           this.$root.$emit('notify', { text: `【${user.name}】でログインしました。`, type: 'info' });
           this.$router.push('/');
         }else{

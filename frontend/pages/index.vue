@@ -262,28 +262,35 @@ export default Vue.extend({
         console.error('[ ERR ]', err);
       }
     })();
-    const fetchFilterSets = (async () => {
-      const url = `https://${process.env.API_HOST}/users/${process.env.ADMIN_USER_ID}`;
-      const options = {
-        method: 'GET',
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": `${process.env.API_KEY}`,
-          "Authorization": this.$store.getters['user/user'].idToken,
-        },
-      };
 
-      try {
-        const response: Response = await fetch(url, options);
-        const fetchedData = await response.json();
-        const fetchedFilterSets = fetchedData.Item.filterSets;
+    if(this.$store.getters['user/user'].filterSets.length){
+      this.filterSets = this.$store.getters['user/user'].filterSets;
+    }else{
+      const fetchFilterSets = (async () => {
+        const url = `https://${process.env.API_HOST}/users/${process.env.ADMIN_USER_ID}`;
+        const options = {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": `${process.env.API_KEY}`,
+            "Authorization": this.$store.getters['user/user'].idToken,
+          },
+        };
 
-        if(response.ok)
-          this.filterSets = fetchedFilterSets;
-      } catch (err) {
-        console.error('[ ERR ]', err);
-      }
-    })();
+        try {
+          const response: Response = await fetch(url, options);
+
+          if(response.ok){
+            const fetchedData = await response.json();
+            const fetchedFilterSets = fetchedData.Item.filterSets;
+            this.$store.commit('user/setFilterSets', fetchedFilterSets);
+            this.filterSets = fetchedFilterSets;
+          }
+        } catch (err) {
+          console.error('[ ERR ]', err);
+        }
+      })();
+    }
   },
 });
 </script>

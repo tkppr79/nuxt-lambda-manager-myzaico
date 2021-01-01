@@ -33,6 +33,7 @@ describe('Setting page component', () => {
     getters: {
       "user/user": { id: 0, name: '', idToken: '', accessToken: '', filterSets: [] }
     },
+    commit: jest.fn(),
   };
 
   it('add filterSet', async () => {

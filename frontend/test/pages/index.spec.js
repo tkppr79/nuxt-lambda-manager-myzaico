@@ -43,6 +43,7 @@ describe('Index page component', () => {
     getters: {
       "user/user": { id: 0, name: '', idToken: '', accessToken: '', filterSets: [] }
     },
+    commit: jest.fn(),
   };
 
   beforeEach(() => {

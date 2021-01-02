@@ -22,7 +22,8 @@ https://nuxt-lambda-manager-myzaico.vercel.app
 ### ユーザー
 - 作成
 - 認証 　　　　　　　　　　　　　　* AWS Cognito
-- 認可(アクセスコントロール)　　　 * AWS Cognito + AWS API Gateway
+- 認可_フロントエンド
+- 認可_バックエンド　　　　　　　　* AWS Cognito + AWS API Gateway
 
 ### UI
 - ナビバー　　　　　　　　　　　　 * Vuetify

@@ -142,6 +142,8 @@ export default Vue.extend({
   },
   mounted(){
     const fetchItem = (async () => {
+      if(!this.$store.getters['user/user'].name) return;
+
       const url = `https://${process.env.API_HOST}/items/${this.$route.params.id}`;
       const options = {
         method: 'GET',

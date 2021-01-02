@@ -241,6 +241,8 @@ export default Vue.extend({
   },
   mounted(){
     const fetchItems = (async () => {
+      if(!this.$store.getters['user/user'].name) return;
+
       const url = `https://${process.env.API_HOST}/items`;
       const options = {
         method: 'GET',
@@ -267,6 +269,8 @@ export default Vue.extend({
       this.filterSets = this.$store.getters['user/user'].filterSets;
     }else{
       const fetchFilterSets = (async () => {
+        if(!this.$store.getters['user/user'].name) return;
+
         const url = `https://${process.env.API_HOST}/users/${process.env.ADMIN_USER_ID}`;
         const options = {
           method: 'GET',

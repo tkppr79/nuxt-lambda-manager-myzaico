@@ -18,15 +18,29 @@ import Vue from 'vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
 import Notification from '@/components/Notification.vue';
+import authorizationCheck from '@/utils/authorization';
 
 export default Vue.extend({
   components:{
     Navbar,
     Footer,
   },
-  beforeMount(){
-    if(!this.$store.getters['user/user'].name && window.location.pathname !== '/login' && window.location.pathname !== '/signup')
-      window.location.replace(`${window.location.protocol}//${window.location.host}/login`);
+  beforeCreate(){
+    if (process.client) {
+      const result: { auth: boolean, redirectPath: string } = authorizationCheck(window.location.pathname, this.$store.getters['user/user']);
+
+      if(!result.auth)
+        this.$router.push(result.redirectPath);
+    }
+
+    this.$router.beforeEach((to, from, next) => {
+      const result: { auth: boolean, redirectPath: string } = authorizationCheck(to.path, this.$store.getters['user/user']);
+
+      if(result.auth)
+        next();
+      else
+        next(result.redirectPath)
+    });
   },
 });
 </script>

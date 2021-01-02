@@ -31,7 +31,7 @@ describe('Setting page component', () => {
 
   const $store = {
     getters: {
-      "user/user": { id: 0, name: '', idToken: '', accessToken: '', filterSets: [] }
+      "user/user": { id: 0, name: 'test-user', idToken: '', accessToken: '', filterSets: [] }
     },
     commit: jest.fn(),
   };
